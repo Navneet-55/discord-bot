@@ -109,6 +109,18 @@ export const ban: Command = {
       },
     });
 
+    // Best-effort mod log (non-blocking)
+    if (interaction.guildId) {
+      services.logWriter
+        .writeToModLogChannel(
+          interaction.guildId,
+          `🔨 **Ban** | Case #${caseNumber}\n**User:** ${targetUser.tag} (${targetUser.id})\n**Moderator:** ${interaction.user.tag}\n**Reason:** ${reason}\n**Delete Days:** ${deleteDays}`
+        )
+        .catch((error) => {
+          services.logger.error({ error, guildId: interaction.guildId }, 'Failed to write mod log');
+        });
+    }
+
     await interaction.reply({
       content: `🔨 Banned ${targetUser} (Case #${caseNumber})\n**Reason:** ${reason}\n**Delete Days:** ${deleteDays}`,
     });

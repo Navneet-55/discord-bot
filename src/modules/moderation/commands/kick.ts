@@ -97,6 +97,18 @@ export const kick: Command = {
       },
     });
 
+    // Best-effort mod log (non-blocking)
+    if (interaction.guildId) {
+      services.logWriter
+        .writeToModLogChannel(
+          interaction.guildId,
+          `👢 **Kick** | Case #${caseNumber}\n**User:** ${targetUser.tag} (${targetUser.id})\n**Moderator:** ${interaction.user.tag}\n**Reason:** ${reason}`
+        )
+        .catch((error) => {
+          services.logger.error({ error, guildId: interaction.guildId }, 'Failed to write mod log');
+        });
+    }
+
     await interaction.reply({
       content: `👢 Kicked ${targetUser} (Case #${caseNumber})\n**Reason:** ${reason}`,
     });
