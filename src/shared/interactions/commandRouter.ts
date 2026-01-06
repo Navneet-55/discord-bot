@@ -8,12 +8,14 @@ import { GuildConfigService } from '../config/guildConfigService';
 import { logger } from '../logging/logger';
 import { prisma } from '../db/prisma';
 import { wrapCommand } from './wrappers';
+import type { LogWriter } from '../../modules/logging/services/logWriter';
 
 export interface Services {
   prisma: typeof prisma;
   logger: typeof logger;
   guildConfigService: GuildConfigService;
   featureFlagService: FeatureFlagService;
+  logWriter: LogWriter;
 }
 
 export interface Command {
