@@ -114,6 +114,18 @@ export const timeout: Command = {
       },
     });
 
+    // Best-effort mod log (non-blocking)
+    if (interaction.guildId) {
+      services.logWriter
+        .writeToModLogChannel(
+          interaction.guildId,
+          `⏱️ **Timeout** | Case #${caseNumber}\n**User:** ${targetUser.tag} (${targetUser.id})\n**Moderator:** ${interaction.user.tag}\n**Duration:** ${durationInput}\n**Reason:** ${reason}`
+        )
+        .catch((error) => {
+          services.logger.error({ error, guildId: interaction.guildId }, 'Failed to write mod log');
+        });
+    }
+
     await interaction.reply({
       content: `⏱️ Timed out ${targetUser} for ${durationInput} (Case #${caseNumber})\n**Reason:** ${reason}`,
     });
