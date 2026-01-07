@@ -19,8 +19,12 @@ export class GuildConfigService {
   }
 
   async upsertConfig(guildId: string, data: GuildConfigData) {
+    if (!guildId || typeof guildId !== 'string') {
+      throw new Error('Invalid guildId provided');
+    }
+
     try {
-      return await prisma.guildConfig.upsert({
+      const result = await prisma.guildConfig.upsert({
         where: { guildId },
         update: {
           ...data,
@@ -31,6 +35,8 @@ export class GuildConfigService {
           ...data,
         },
       });
+      logger.debug({ guildId, data }, 'Guild config updated');
+      return result;
     } catch (error) {
       logger.error({ error, guildId, data }, 'Failed to upsert guild config');
       throw error;
