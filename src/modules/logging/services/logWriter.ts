@@ -11,6 +11,10 @@ export class LogWriter {
   ) {}
 
   async writeToLogChannel(guildId: string, content: string): Promise<boolean> {
+    if (!guildId || !content) {
+      return false;
+    }
+
     try {
       const isLoggingEnabled = await this.featureFlagService.isEnabled(guildId, 'LOGGING');
       if (!isLoggingEnabled) {
@@ -24,10 +28,13 @@ export class LogWriter {
 
       const channel = await this.client.channels.fetch(config.logChannelId);
       if (!channel || !channel.isTextBased()) {
+        logger.warn({ guildId, channelId: config.logChannelId }, 'Log channel not found or invalid');
         return false;
       }
 
-      await (channel as TextChannel).send(content);
+      // Discord message limit is 2000 characters
+      const messageContent = content.length > 2000 ? `${content.substring(0, 1997)}...` : content;
+      await (channel as TextChannel).send(messageContent);
       return true;
     } catch (error) {
       logger.error({ error, guildId }, 'Failed to write to log channel');

@@ -69,17 +69,26 @@ export const cases: Command = {
     const embed = new EmbedBuilder()
       .setTitle(targetUser ? `Cases for ${targetUser.tag}` : 'Recent Cases')
       .setColor(0x5865f2)
-      .setTimestamp();
+      .setTimestamp()
+      .setFooter({ text: `Showing ${cases.length} case${cases.length !== 1 ? 's' : ''}` });
 
-    const description = cases
-      .map((c) => {
-        const emoji = TYPE_EMOJIS[c.type] || '📝';
-        const date = new Date(c.createdAt).toLocaleDateString();
-        return `${emoji} **Case #${c.caseNumber}** - ${c.type}\n<@${c.userId}> by <@${c.moderatorId}>\n${c.reason || 'No reason'}\n*${date}*`;
-      })
-      .join('\n\n');
+    const descriptionParts: string[] = [];
+    const MAX_DESCRIPTION_LENGTH = 4096; // Discord embed description limit
 
-    embed.setDescription(description);
+    for (const c of cases) {
+      const emoji = TYPE_EMOJIS[c.type] || '📝';
+      const date = new Date(c.createdAt).toLocaleDateString();
+      const reason = c.reason && c.reason.length > 100 ? `${c.reason.substring(0, 97)}...` : c.reason || 'No reason';
+      const caseText = `${emoji} **Case #${c.caseNumber}** - ${c.type}\n<@${c.userId}> by <@${c.moderatorId}>\n${reason}\n*${date}*`;
+
+      if (descriptionParts.join('\n\n').length + caseText.length + 2 > MAX_DESCRIPTION_LENGTH) {
+        break;
+      }
+
+      descriptionParts.push(caseText);
+    }
+
+    embed.setDescription(descriptionParts.join('\n\n'));
 
     await interaction.reply({
       embeds: [embed],

@@ -73,12 +73,35 @@ export const config: Command = {
         modLogChannelId?: string | null;
       } = {};
 
+      // Check if channels are provided and validate permissions
       if (logChannel) {
-        updateData.logChannelId = logChannel.id;
+        const channel = await interaction.guild.channels.fetch(logChannel.id);
+        if (channel && channel.isTextBased()) {
+          const botMember = await interaction.guild.members.fetch(interaction.client.user!.id);
+          if (!channel.permissionsFor(botMember)?.has(['ViewChannel', 'SendMessages'])) {
+            await interaction.reply({
+              content: `❌ I don't have permission to send messages in ${logChannel}`,
+              ephemeral: true,
+            });
+            return;
+          }
+          updateData.logChannelId = logChannel.id;
+        }
       }
 
       if (modLogChannel) {
-        updateData.modLogChannelId = modLogChannel.id;
+        const channel = await interaction.guild.channels.fetch(modLogChannel.id);
+        if (channel && channel.isTextBased()) {
+          const botMember = await interaction.guild.members.fetch(interaction.client.user!.id);
+          if (!channel.permissionsFor(botMember)?.has(['ViewChannel', 'SendMessages'])) {
+            await interaction.reply({
+              content: `❌ I don't have permission to send messages in ${modLogChannel}`,
+              ephemeral: true,
+            });
+            return;
+          }
+          updateData.modLogChannelId = modLogChannel.id;
+        }
       }
 
       if (Object.keys(updateData).length === 0) {
@@ -89,20 +112,28 @@ export const config: Command = {
         return;
       }
 
-      await services.guildConfigService.upsertConfig(interaction.guildId, updateData);
+      try {
+        await services.guildConfigService.upsertConfig(interaction.guildId, updateData);
 
-      const parts: string[] = ['✅ **Configuration updated:**'];
-      if (updateData.logChannelId !== undefined) {
-        parts.push(`Log Channel: <#${updateData.logChannelId}>`);
-      }
-      if (updateData.modLogChannelId !== undefined) {
-        parts.push(`Mod Log Channel: <#${updateData.modLogChannelId}>`);
-      }
+        const parts: string[] = ['✅ **Configuration updated:**'];
+        if (updateData.logChannelId !== undefined) {
+          parts.push(`Log Channel: <#${updateData.logChannelId}>`);
+        }
+        if (updateData.modLogChannelId !== undefined) {
+          parts.push(`Mod Log Channel: <#${updateData.modLogChannelId}>`);
+        }
 
-      await interaction.reply({
-        content: parts.join('\n'),
-        ephemeral: true,
-      });
+        await interaction.reply({
+          content: parts.join('\n'),
+          ephemeral: true,
+        });
+      } catch (error) {
+        services.logger.error({ error, guildId: interaction.guildId }, 'Failed to update config');
+        await interaction.reply({
+          content: '❌ Failed to update configuration. Please try again.',
+          ephemeral: true,
+        });
+      }
     }
   },
   featureKey: 'CORE',

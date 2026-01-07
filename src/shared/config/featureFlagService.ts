@@ -30,13 +30,17 @@ export class FeatureFlagService {
   }
 
   async setEnabled(guildId: string, featureKey: FeatureKey, enabled: boolean) {
+    if (!guildId || typeof guildId !== 'string') {
+      throw new Error('Invalid guildId provided');
+    }
+
     // Prevent disabling CORE
     if (featureKey === 'CORE' && !enabled) {
       throw new Error('Cannot disable CORE feature');
     }
 
     try {
-      return await prisma.featureFlag.upsert({
+      const result = await prisma.featureFlag.upsert({
         where: {
           guildId_featureKey: {
             guildId,
@@ -53,6 +57,8 @@ export class FeatureFlagService {
           enabled,
         },
       });
+      logger.info({ guildId, featureKey, enabled }, 'Feature flag updated');
+      return result;
     } catch (error) {
       logger.error({ error, guildId, featureKey, enabled }, 'Failed to set feature flag');
       throw error;
