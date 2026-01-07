@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Events } from 'discord.js';
 import { createClient } from './client';
 import { loadModules } from './moduleLoader';
@@ -45,8 +46,25 @@ async function bootstrap() {
     });
 
     logger.info('Bot bootstrap complete');
+
+    // Graceful shutdown
+    const shutdown = async (signal: string) => {
+      logger.info({ signal }, 'Received shutdown signal');
+      try {
+        await prisma.$disconnect();
+        logger.info('Database disconnected');
+        process.exit(0);
+      } catch (error) {
+        logger.error({ error }, 'Error during shutdown');
+        process.exit(1);
+      }
+    };
+
+    process.on('SIGINT', () => shutdown('SIGINT'));
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
   } catch (error) {
     logger.error({ error }, 'Bootstrap failed');
+    await prisma.$disconnect().catch(() => {});
     process.exit(1);
   }
 }
