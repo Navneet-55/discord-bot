@@ -10,9 +10,14 @@
     "deploy-commands": "tsx scripts/deploy-commands.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "deploy:commands": "npm run deploy-commands"
   },
-  "keywords": ["discord", "bot", "moderation"],
+  "keywords": [
+    "discord",
+    "bot",
+    "moderation"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -20,6 +25,7 @@
     "@discordjs/rest": "^2.2.0",
     "@prisma/client": "^5.7.1",
     "discord.js": "^14.14.1",
+    "dotenv": "^17.2.3",
     "pino": "^8.17.2",
     "pino-pretty": "^10.3.1",
     "zod": "^3.22.4"
@@ -37,4 +43,3 @@
     "typescript": "^5.3.3"
   }
 }
-
