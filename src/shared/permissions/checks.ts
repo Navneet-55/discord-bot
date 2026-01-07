@@ -31,6 +31,11 @@ export function checkCanModerate(
   moderator: GuildMember,
   target: GuildMember
 ): PermissionCheckResult {
+  // Must be in the same guild
+  if (moderator.guild.id !== target.guild.id) {
+    return { allowed: false, reason: 'Users must be in the same guild' };
+  }
+
   // Cannot moderate server owner
   if (target.id === target.guild.ownerId) {
     return { allowed: false, reason: 'Cannot moderate the server owner' };
