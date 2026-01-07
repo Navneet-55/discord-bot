@@ -10,16 +10,16 @@ export const prisma = new PrismaClient({
 });
 
 prisma.$on('error' as never, (e: unknown) => {
-  logger.error(e, 'Prisma error');
+  logger.error({ error: e }, 'Prisma error');
 });
 
 prisma.$on('warn' as never, (e: unknown) => {
-  logger.warn(e, 'Prisma warning');
+  logger.warn({ warning: e }, 'Prisma warning');
 });
 
 if (process.env.NODE_ENV === 'development') {
   prisma.$on('query' as never, (e: unknown) => {
-    logger.debug(e, 'Prisma query');
+    logger.debug({ query: e }, 'Prisma query');
   });
 }
 
