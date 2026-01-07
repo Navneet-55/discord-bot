@@ -1,11 +1,12 @@
-import { type GuildMember, Events } from 'discord.js';
+import { type Client, type GuildMember, Events } from 'discord.js';
 import { logger } from '../../../shared/logging/logger';
 import { LogWriter } from '../services/logWriter';
+import { FeatureFlagService } from '../../../shared/config/featureFlagService';
 
 export function setupGuildMemberAddEvent(
-  client: any,
+  client: Client,
   logWriter: LogWriter,
-  featureFlagService: any
+  featureFlagService: FeatureFlagService
 ) {
   client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
     try {

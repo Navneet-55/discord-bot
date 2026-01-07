@@ -6,19 +6,8 @@ import {
 import { checkModeratorPermissions, checkCanModerate } from '../../../shared/permissions/checks';
 import { parseDuration } from '../../../shared/utils/duration';
 import { prisma } from '../../../shared/db/prisma';
+import { getNextCaseNumber } from '../../../shared/utils/caseNumber';
 import type { Command } from '../../../shared/interactions/commandRouter';
-
-async function getNextCaseNumber(guildId: string): Promise<number> {
-  return await prisma.$transaction(async (tx) => {
-    const maxCase = await tx.modCase.findFirst({
-      where: { guildId },
-      orderBy: { caseNumber: 'desc' },
-      select: { caseNumber: true },
-    });
-
-    return (maxCase?.caseNumber ?? 0) + 1;
-  });
-}
 
 export const timeout: Command = {
   name: 'timeout',
