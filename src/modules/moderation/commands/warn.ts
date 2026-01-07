@@ -61,19 +61,29 @@ export const warn: Command = {
       return;
     }
 
-    const caseNumber = await getNextCaseNumber(interaction.guildId);
+    let caseNumber: number;
+    try {
+      caseNumber = await getNextCaseNumber(interaction.guildId);
 
-    await prisma.modCase.create({
-      data: {
-        guildId: interaction.guildId,
-        caseNumber,
-        userId: targetUser.id,
-        moderatorId: interaction.user.id,
-        type: 'WARN',
-        reason,
-        metadata: {},
-      },
-    });
+      await prisma.modCase.create({
+        data: {
+          guildId: interaction.guildId,
+          caseNumber,
+          userId: targetUser.id,
+          moderatorId: interaction.user.id,
+          type: 'WARN',
+          reason,
+          metadata: {},
+        },
+      });
+    } catch (error) {
+      services.logger.error({ error, guildId: interaction.guildId }, 'Failed to create mod case');
+      await interaction.reply({
+        content: 'Failed to create case record. Please try again.',
+        ephemeral: true,
+      });
+      return;
+    }
 
     // Best-effort mod log (non-blocking)
     if (interaction.guildId) {

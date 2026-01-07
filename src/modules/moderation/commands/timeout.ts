@@ -89,19 +89,29 @@ export const timeout: Command = {
       return;
     }
 
-    const caseNumber = await getNextCaseNumber(interaction.guildId);
+    let caseNumber: number;
+    try {
+      caseNumber = await getNextCaseNumber(interaction.guildId);
 
-    await prisma.modCase.create({
-      data: {
-        guildId: interaction.guildId,
-        caseNumber,
-        userId: targetUser.id,
-        moderatorId: interaction.user.id,
-        type: 'TIMEOUT',
-        reason,
-        metadata: { durationMs: durationResult.milliseconds, durationInput },
-      },
-    });
+      await prisma.modCase.create({
+        data: {
+          guildId: interaction.guildId,
+          caseNumber,
+          userId: targetUser.id,
+          moderatorId: interaction.user.id,
+          type: 'TIMEOUT',
+          reason,
+          metadata: { durationMs: durationResult.milliseconds, durationInput },
+        },
+      });
+    } catch (error) {
+      services.logger.error({ error, guildId: interaction.guildId }, 'Failed to create mod case');
+      await interaction.reply({
+        content: 'User was timed out, but failed to create case record. Please check logs.',
+        ephemeral: true,
+      });
+      return;
+    }
 
     // Best-effort mod log (non-blocking)
     if (interaction.guildId) {
