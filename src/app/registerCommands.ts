@@ -14,12 +14,9 @@ export async function registerCommands(commands: Command[]) {
 
     if (env.DISCORD_GUILD_ID) {
       // Guild-scoped deployment (faster)
-      await rest.put(
-        Routes.applicationGuildCommands(env.DISCORD_CLIENT_ID, env.DISCORD_GUILD_ID),
-        {
-          body: commandsData,
-        }
-      );
+      await rest.put(Routes.applicationGuildCommands(env.DISCORD_CLIENT_ID, env.DISCORD_GUILD_ID), {
+        body: commandsData,
+      });
       logger.info(
         { guildId: env.DISCORD_GUILD_ID, commandCount: commands.length },
         'Successfully reloaded guild-scoped application (/) commands.'
@@ -40,4 +37,3 @@ export async function registerCommands(commands: Command[]) {
     throw error;
   }
 }
-

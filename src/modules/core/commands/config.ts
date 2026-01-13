@@ -1,8 +1,4 @@
-import {
-  type ChatInputCommandInteraction,
-  SlashCommandBuilder,
-  ChannelType,
-} from 'discord.js';
+import { SlashCommandBuilder, ChannelType } from 'discord.js';
 import { checkAdminPermissions } from '../../../shared/permissions/checks';
 import type { Command } from '../../../shared/interactions/commandRouter';
 
@@ -75,9 +71,9 @@ export const config: Command = {
 
       // Check if channels are provided and validate permissions
       if (logChannel) {
-        const channel = await interaction.guild.channels.fetch(logChannel.id);
+        const channel = await interaction.guild!.channels.fetch(logChannel.id);
         if (channel && channel.isTextBased()) {
-          const botMember = await interaction.guild.members.fetch(interaction.client.user!.id);
+          const botMember = await interaction.guild!.members.fetch(interaction.client.user!.id);
           if (!channel.permissionsFor(botMember)?.has(['ViewChannel', 'SendMessages'])) {
             await interaction.reply({
               content: `❌ I don't have permission to send messages in ${logChannel}`,
@@ -90,9 +86,9 @@ export const config: Command = {
       }
 
       if (modLogChannel) {
-        const channel = await interaction.guild.channels.fetch(modLogChannel.id);
+        const channel = await interaction.guild!.channels.fetch(modLogChannel.id);
         if (channel && channel.isTextBased()) {
-          const botMember = await interaction.guild.members.fetch(interaction.client.user!.id);
+          const botMember = await interaction.guild!.members.fetch(interaction.client.user!.id);
           if (!channel.permissionsFor(botMember)?.has(['ViewChannel', 'SendMessages'])) {
             await interaction.reply({
               content: `❌ I don't have permission to send messages in ${modLogChannel}`,
@@ -138,4 +134,3 @@ export const config: Command = {
   },
   featureKey: 'CORE',
 };
-

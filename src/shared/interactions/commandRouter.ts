@@ -2,6 +2,7 @@ import {
   type ChatInputCommandInteraction,
   type SlashCommandBuilder,
   type SlashCommandSubcommandsOnlyBuilder,
+  type SlashCommandOptionsOnlyBuilder,
 } from 'discord.js';
 import { FeatureFlagService, type FeatureKey } from '../config/featureFlagService';
 import { GuildConfigService } from '../config/guildConfigService';
@@ -20,7 +21,11 @@ export interface Services {
 
 export interface Command {
   name: string;
-  data: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
+  data:
+    | SlashCommandBuilder
+    | SlashCommandSubcommandsOnlyBuilder
+    | SlashCommandOptionsOnlyBuilder
+    | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
   execute: (interaction: ChatInputCommandInteraction, services: Services) => Promise<void>;
   featureKey?: FeatureKey;
 }
@@ -82,4 +87,3 @@ export class CommandRouter {
     return Array.from(this.commands.values());
   }
 }
-

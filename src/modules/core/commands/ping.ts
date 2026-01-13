@@ -1,10 +1,10 @@
-import { type ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder } from 'discord.js';
 import type { Command } from '../../../shared/interactions/commandRouter';
 
 export const ping: Command = {
   name: 'ping',
   data: new SlashCommandBuilder().setName('ping').setDescription('Check bot latency'),
-  async execute(interaction, services) {
+  async execute(interaction) {
     const sent = await interaction.reply({
       content: 'Pinging...',
       fetchReply: true,
@@ -20,4 +20,3 @@ export const ping: Command = {
   },
   featureKey: 'CORE',
 };
-

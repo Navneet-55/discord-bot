@@ -1,8 +1,4 @@
-import {
-  type ChatInputCommandInteraction,
-  SlashCommandBuilder,
-  EmbedBuilder,
-} from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
 import { checkModeratorPermissions } from '../../../shared/permissions/checks';
 import { prisma } from '../../../shared/db/prisma';
 import type { Command } from '../../../shared/interactions/commandRouter';
@@ -19,10 +15,8 @@ export const cases: Command = {
   data: new SlashCommandBuilder()
     .setName('cases')
     .setDescription('View moderation cases')
-    .addUserOption((option) =>
-      option.setName('user').setDescription('Filter cases by user')
-    ),
-  async execute(interaction, services) {
+    .addUserOption((option) => option.setName('user').setDescription('Filter cases by user')),
+  async execute(interaction) {
     if (!interaction.guildId) {
       await interaction.reply({
         content: 'This command must be used in a guild',
@@ -58,9 +52,7 @@ export const cases: Command = {
 
     if (cases.length === 0) {
       await interaction.reply({
-        content: targetUser
-          ? `No cases found for ${targetUser}`
-          : 'No cases found for this guild',
+        content: targetUser ? `No cases found for ${targetUser}` : 'No cases found for this guild',
         ephemeral: true,
       });
       return;
@@ -78,7 +70,10 @@ export const cases: Command = {
     for (const c of cases) {
       const emoji = TYPE_EMOJIS[c.type] || '📝';
       const date = new Date(c.createdAt).toLocaleDateString();
-      const reason = c.reason && c.reason.length > 100 ? `${c.reason.substring(0, 97)}...` : c.reason || 'No reason';
+      const reason =
+        c.reason && c.reason.length > 100
+          ? `${c.reason.substring(0, 97)}...`
+          : c.reason || 'No reason';
       const caseText = `${emoji} **Case #${c.caseNumber}** - ${c.type}\n<@${c.userId}> by <@${c.moderatorId}>\n${reason}\n*${date}*`;
 
       if (descriptionParts.join('\n\n').length + caseText.length + 2 > MAX_DESCRIPTION_LENGTH) {
@@ -97,4 +92,3 @@ export const cases: Command = {
   },
   featureKey: 'MODERATION',
 };
-

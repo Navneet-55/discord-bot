@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, type ClientEvents } from 'discord.js';
+import { Client, GatewayIntentBits } from 'discord.js';
 import { getEnv } from '../shared/config/env';
 import { logger } from '../shared/logging/logger';
 
@@ -43,4 +43,3 @@ export async function createClient(): Promise<Client> {
 
   return client;
 }
-

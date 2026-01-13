@@ -1,8 +1,4 @@
-import {
-  type ChatInputCommandInteraction,
-  SlashCommandBuilder,
-  type GuildMember,
-} from 'discord.js';
+import { SlashCommandBuilder, type GuildMember } from 'discord.js';
 import { checkModeratorPermissions, checkCanModerate } from '../../../shared/permissions/checks';
 import { prisma } from '../../../shared/db/prisma';
 import { getNextCaseNumber } from '../../../shared/utils/caseNumber';
@@ -16,9 +12,7 @@ export const kick: Command = {
     .addUserOption((option) =>
       option.setName('user').setDescription('User to kick').setRequired(true)
     )
-    .addStringOption((option) =>
-      option.setName('reason').setDescription('Reason for the kick')
-    ),
+    .addStringOption((option) => option.setName('reason').setDescription('Reason for the kick')),
   async execute(interaction, services) {
     if (!interaction.guildId || !interaction.member) {
       await interaction.reply({
@@ -40,7 +34,7 @@ export const kick: Command = {
     const targetUser = interaction.options.getUser('user', true);
     const reason = interaction.options.getString('reason') || 'No reason provided';
 
-    const targetMember = await interaction.guild.members.fetch(targetUser.id).catch(() => null);
+    const targetMember = await interaction.guild!.members.fetch(targetUser.id).catch(() => null);
     if (!targetMember) {
       await interaction.reply({
         content: 'User not found in this guild',
@@ -49,10 +43,7 @@ export const kick: Command = {
       return;
     }
 
-    const canModerate = checkCanModerate(
-      interaction.member as GuildMember,
-      targetMember
-    );
+    const canModerate = checkCanModerate(interaction.member as GuildMember, targetMember);
     if (!canModerate.allowed) {
       await interaction.reply({
         content: canModerate.reason || 'Cannot moderate this user',
@@ -114,4 +105,3 @@ export const kick: Command = {
   },
   featureKey: 'MODERATION',
 };
-

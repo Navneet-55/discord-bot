@@ -23,4 +23,3 @@ export async function getNextCaseNumber(guildId: string): Promise<number> {
     throw error;
   }
 }
-
