@@ -25,4 +25,3 @@ export function loadModules(
   // Setup logging module (events)
   setupLoggingModule(client, guildConfigService, featureFlagService);
 }
-

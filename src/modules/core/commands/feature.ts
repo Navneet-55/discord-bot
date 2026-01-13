@@ -1,7 +1,4 @@
-import {
-  type ChatInputCommandInteraction,
-  SlashCommandBuilder,
-} from 'discord.js';
+import { SlashCommandBuilder } from 'discord.js';
 import { checkAdminPermissions } from '../../../shared/permissions/checks';
 import type { FeatureKey } from '../../../shared/config/featureFlagService';
 import type { Command } from '../../../shared/interactions/commandRouter';
@@ -113,4 +110,3 @@ export const feature: Command = {
   },
   featureKey: 'CORE',
 };
-

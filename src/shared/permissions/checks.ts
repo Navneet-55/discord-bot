@@ -1,9 +1,4 @@
-import {
-  GuildMember,
-  PermissionFlagsBits,
-  type ChatInputCommandInteraction,
-} from 'discord.js';
-import { logger } from '../logging/logger';
+import { GuildMember, PermissionFlagsBits, type ChatInputCommandInteraction } from 'discord.js';
 
 export interface PermissionCheckResult {
   allowed: boolean;
@@ -73,4 +68,3 @@ export function checkAdminPermissions(
 
   return { allowed: true };
 }
-

@@ -25,4 +25,3 @@ export function getEnv(): Env {
   }
   return env;
 }
-

@@ -28,7 +28,10 @@ export class LogWriter {
 
       const channel = await this.client.channels.fetch(config.logChannelId);
       if (!channel || !channel.isTextBased()) {
-        logger.warn({ guildId, channelId: config.logChannelId }, 'Log channel not found or invalid');
+        logger.warn(
+          { guildId, channelId: config.logChannelId },
+          'Log channel not found or invalid'
+        );
         return false;
       }
 
@@ -48,10 +51,7 @@ export class LogWriter {
     }
 
     try {
-      const isModerationEnabled = await this.featureFlagService.isEnabled(
-        guildId,
-        'MODERATION'
-      );
+      const isModerationEnabled = await this.featureFlagService.isEnabled(guildId, 'MODERATION');
       if (!isModerationEnabled) {
         return false;
       }
@@ -63,7 +63,10 @@ export class LogWriter {
 
       const channel = await this.client.channels.fetch(config.modLogChannelId);
       if (!channel || !channel.isTextBased()) {
-        logger.warn({ guildId, channelId: config.modLogChannelId }, 'Mod log channel not found or invalid');
+        logger.warn(
+          { guildId, channelId: config.modLogChannelId },
+          'Mod log channel not found or invalid'
+        );
         return false;
       }
 

@@ -1,8 +1,4 @@
-import {
-  type ChatInputCommandInteraction,
-  SlashCommandBuilder,
-  type GuildMember,
-} from 'discord.js';
+import { SlashCommandBuilder, type GuildMember } from 'discord.js';
 import { checkModeratorPermissions, checkCanModerate } from '../../../shared/permissions/checks';
 import { parseDuration } from '../../../shared/utils/duration';
 import { prisma } from '../../../shared/db/prisma';
@@ -18,14 +14,9 @@ export const timeout: Command = {
       option.setName('user').setDescription('User to timeout').setRequired(true)
     )
     .addStringOption((option) =>
-      option
-        .setName('duration')
-        .setDescription('Duration (e.g., 10m, 2h, 1d)')
-        .setRequired(true)
+      option.setName('duration').setDescription('Duration (e.g., 10m, 2h, 1d)').setRequired(true)
     )
-    .addStringOption((option) =>
-      option.setName('reason').setDescription('Reason for the timeout')
-    ),
+    .addStringOption((option) => option.setName('reason').setDescription('Reason for the timeout')),
   async execute(interaction, services) {
     if (!interaction.guildId || !interaction.member) {
       await interaction.reply({
@@ -57,7 +48,7 @@ export const timeout: Command = {
       return;
     }
 
-    const targetMember = await interaction.guild.members.fetch(targetUser.id).catch(() => null);
+    const targetMember = await interaction.guild!.members.fetch(targetUser.id).catch(() => null);
     if (!targetMember) {
       await interaction.reply({
         content: 'User not found in this guild',
@@ -66,10 +57,7 @@ export const timeout: Command = {
       return;
     }
 
-    const canModerate = checkCanModerate(
-      interaction.member as GuildMember,
-      targetMember
-    );
+    const canModerate = checkCanModerate(interaction.member as GuildMember, targetMember);
     if (!canModerate.allowed) {
       await interaction.reply({
         content: canModerate.reason || 'Cannot moderate this user',
@@ -131,4 +119,3 @@ export const timeout: Command = {
   },
   featureKey: 'MODERATION',
 };
-

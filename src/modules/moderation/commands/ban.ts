@@ -1,8 +1,4 @@
-import {
-  type ChatInputCommandInteraction,
-  SlashCommandBuilder,
-  type GuildMember,
-} from 'discord.js';
+import { SlashCommandBuilder, type GuildMember } from 'discord.js';
 import { checkModeratorPermissions, checkCanModerate } from '../../../shared/permissions/checks';
 import { prisma } from '../../../shared/db/prisma';
 import { getNextCaseNumber } from '../../../shared/utils/caseNumber';
@@ -16,9 +12,7 @@ export const ban: Command = {
     .addUserOption((option) =>
       option.setName('user').setDescription('User to ban').setRequired(true)
     )
-    .addStringOption((option) =>
-      option.setName('reason').setDescription('Reason for the ban')
-    )
+    .addStringOption((option) => option.setName('reason').setDescription('Reason for the ban'))
     .addIntegerOption((option) =>
       option
         .setName('delete_days')
@@ -51,16 +45,13 @@ export const ban: Command = {
     // Check if user is in guild (optional for ban)
     let targetMember: GuildMember | null = null;
     try {
-      targetMember = await interaction.guild.members.fetch(targetUser.id);
+      targetMember = await interaction.guild!.members.fetch(targetUser.id);
     } catch {
       // User not in guild, can still ban
     }
 
     if (targetMember) {
-      const canModerate = checkCanModerate(
-        interaction.member as GuildMember,
-        targetMember
-      );
+      const canModerate = checkCanModerate(interaction.member as GuildMember, targetMember);
       if (!canModerate.allowed) {
         await interaction.reply({
           content: canModerate.reason || 'Cannot moderate this user',
@@ -71,7 +62,7 @@ export const ban: Command = {
     }
 
     try {
-      await interaction.guild.members.ban(targetUser.id, {
+      await interaction.guild!.members.ban(targetUser.id, {
         reason,
         deleteMessageDays: deleteDays,
       });
@@ -126,4 +117,3 @@ export const ban: Command = {
   },
   featureKey: 'MODERATION',
 };
-

@@ -1,4 +1,4 @@
-import { type ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder } from 'discord.js';
 import type { Command } from '../../../shared/interactions/commandRouter';
 
 export const health: Command = {
@@ -25,4 +25,3 @@ export const health: Command = {
   },
   featureKey: 'CORE',
 };
-

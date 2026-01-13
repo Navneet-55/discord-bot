@@ -6,4 +6,3 @@ import { timeout } from './commands/timeout';
 import { cases } from './commands/cases';
 
 export const moderationModule: Command[] = [warn, kick, ban, timeout, cases];
-

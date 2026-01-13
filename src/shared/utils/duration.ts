@@ -70,4 +70,3 @@ export function parseDuration(input: string): DurationParseResult {
     milliseconds,
   };
 }
-

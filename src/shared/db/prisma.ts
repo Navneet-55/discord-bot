@@ -22,4 +22,3 @@ if (process.env.NODE_ENV === 'development') {
     logger.debug({ query: e }, 'Prisma query');
   });
 }
-

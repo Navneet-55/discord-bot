@@ -17,4 +17,3 @@ export function setupLoggingModule(
 
   return logWriter;
 }
-

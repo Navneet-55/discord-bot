@@ -5,4 +5,3 @@ import { config } from './commands/config';
 import { feature } from './commands/feature';
 
 export const coreModule: Command[] = [ping, health, config, feature];
-
